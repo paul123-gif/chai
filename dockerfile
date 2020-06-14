@@ -1,20 +1,13 @@
-# Use the official image as a parent image.
-FROM node:current-slim
+FROM ubuntu:12.04
 
-# Set the working directory.
-WORKDIR /usr/src/app
+MAINTAINER Kimbro Staken version: 0.1
 
-# Copy the file from your host to your current location.
-COPY package.json .
+RUN apt-get update && apt-get install -y apache2 && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Run the command inside your image filesystem.
-RUN npm install
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
 
-# Inform Docker that the container is listening on the specified port at runtime.
-EXPOSE 8080
+EXPOSE 80
 
-# Run the specified command within the container.
-CMD [ "npm", "start" ]
-
-# Copy the rest of your app's source code from your host to your image filesystem.
-COPY . .
+CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]
